@@ -11,7 +11,7 @@ from telegram.ext import (
     ConversationHandler
 )
 
-# Configuration - USING YOUR PROVIDED BOT TOKEN
+# Configuration
 BOT_TOKEN = "7901548275:AAEe1RCehwd8fL4_EeZtzQgx25uUSgpnw5M"
 CHANNEL_USERNAME = "@YourChannel"  # REPLACE WITH YOUR ACTUAL CHANNEL
 GROUP_USERNAME = "@YourGroup"      # REPLACE WITH YOUR ACTUAL GROUP
@@ -65,7 +65,7 @@ async def handle_solana(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         await update.message.reply_text("⚠️ That doesn't look like a Solana address. Please try again:")
         return SOLANA_STATE
     
-    # Log the submission (no database in test version)
+    # Log the submission
     logger.info(
         f"New TEST submission:\n"
         f"User: {user.id} | @{user.username}\n"
@@ -85,7 +85,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return ConversationHandler.END
 
 def main() -> None:
-    # Create Application
+    # Create Application with simplified initialization
     application = Application.builder().token(BOT_TOKEN).build()
     
     # Conversation handler
@@ -100,20 +100,17 @@ def main() -> None:
     
     application.add_handler(conv_handler)
     
-    # Log bot start
-    logger.info("TEST BOT STARTED - Using token: " + BOT_TOKEN[:10] + "...")
-    logger.warning("SECURITY NOTE: This is a test bot with minimal security")
-    
     # Start the bot
     if 'RENDER' in os.environ:
-        # Render deployment
+        # Render deployment settings
         port = int(os.environ.get('PORT', 8443))
         webhook_url = f"https://your-render-service.onrender.com/{BOT_TOKEN}"
+        
         application.run_webhook(
             listen="0.0.0.0",
             port=port,
-            url_path=BOT_TOKEN,
-            webhook_url=webhook_url
+            webhook_url=webhook_url,
+            url_path=BOT_TOKEN
         )
         logger.info(f"Running in WEBHOOK mode on Render: {webhook_url}")
     else:
